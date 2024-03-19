@@ -101,6 +101,9 @@ int main(int argc, char *argv[])
     CommandSetup *cmd = CommandSetup::getInstance();
     cmd->setRelauncher(relaunchSelf);
     cmd->setEngineRootPath(getEngineRoot());
+    if (argc > 2 && strcmp(argv[1], "-NSDocumentRevisionsDebugMode") == 0) {
+        argc = 1; // not parse -NSDocumentRevisionsDebugMode YES
+    }
     cmd->parseCommand(argc, argv);
     cmd->setupEngine();
     
@@ -108,12 +111,12 @@ int main(int argc, char *argv[])
     // create after GLView inited
     ConsoleWindowController *consoleController = [[ConsoleWindowController alloc] initWithWindowNibName:@"ConsoleWindow"];
     [consoleController.window orderFrontRegardless];
-#endif
 
     std::string logPath = cmd->getLogPath();
     if (logPath.size() > 0) {
         [consoleController openLogToFile:logPath.c_str()];
     }
+#endif
     
     setupMenu();// after GLView inited
 

@@ -250,8 +250,10 @@ Widget* Widget::getWidgetParent()
 
 void Widget::setEnabled(bool enabled)
 {
-    _enabled = enabled;
-    setBright(enabled);
+    if (_enabled != enabled) {
+        _enabled = enabled;
+        setBright(enabled);
+    }
 }
 
 void Widget::initRenderer()
@@ -812,6 +814,9 @@ void Widget::onTouchMoved(Touch *touch, Event* /*unusedEvent*/)
 
 void Widget::onTouchEnded(Touch *touch, Event* /*unusedEvent*/)
 {
+    // if self be released in propagateTouchEvent, may crash at setHighlighted.
+    // use retain() to avoid such case.
+    this->retain();
     _touchEndPosition = touch->getLocation();
 
     /*
@@ -833,6 +838,7 @@ void Widget::onTouchEnded(Touch *touch, Event* /*unusedEvent*/)
     {
         cancelUpEvent();
     }
+    this->release();
 }
 
 void Widget::onTouchCancelled(Touch* touch, Event* /*unusedEvent*/)
